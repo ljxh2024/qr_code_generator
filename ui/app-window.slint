@@ -1,9 +1,9 @@
 import { LineEdit, Button, HorizontalBox } from "std-widgets.slint";
 
 export component MainWindow inherits Window {
-  title: "qr code genarator";
+  title: "qr_code_genarator";
 
-  in property <image> qrcodeurl;
+  in property <image> qrcode;
   callback generate-qr-code(string);
 
   VerticalLayout {
@@ -18,12 +18,12 @@ export component MainWindow inherits Window {
 
     le := LineEdit {
       placeholder-text: "在此输入二维码内容";
-      font-size: 12px;
+      font-size: 13px;
       height: 32px;
     }
 
     Button {
-      text: "确定";
+      text: "确 定";
       enabled: le.text != "";
       clicked => {
         root.generate-qr-code(le.text);
@@ -36,7 +36,7 @@ export component MainWindow inherits Window {
       Image {
         width: 232px;
         height: 232px;
-        source: qrcodeurl;
+        source: qrcode;
       }
     }
   }

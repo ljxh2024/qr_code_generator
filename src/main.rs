@@ -20,7 +20,7 @@ fn main() -> Result<(), PlatformError>{
                 image.width(),
                 image.height()
             );
-            ui.set_qrcodeurl(Image::from_rgb8(buffer));
+            ui.set_qrcode(Image::from_rgb8(buffer));
         }
     });
 
