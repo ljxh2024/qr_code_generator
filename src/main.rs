@@ -1,3 +1,5 @@
+#![windows_subsystem = "windows"]
+
 use slint::{ Image, PlatformError, Rgb8Pixel, SharedPixelBuffer };
 use qrcode::QrCode;
 use image::Rgb;
