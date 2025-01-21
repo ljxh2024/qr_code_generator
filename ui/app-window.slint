@@ -4,7 +4,8 @@ export component MainWindow inherits Window {
   title: "qr_code_genarator";
 
   in property <image> qrcode;
-  in property <string> filename;
+  in property <string> file-id;
+  in property <int> save-count;
   in-out property <bool> is-save-success: false;
   
   callback generate-qrcode(string);

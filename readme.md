@@ -1,8 +1,3 @@
-# 桌面端二维码生成器
+# qr_code_generator
 
-技术栈：`Rust(1.84.0)`、`Slint GUI(1.9.2)`
-
-## Features
-
-- [x] 生成二维码
-- [x] 保存二维码至本地
+`qr_code_generator`是一个桌面端二维码生成器项目，目前主要适配`Windows`.
