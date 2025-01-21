@@ -1,14 +1,39 @@
-import { LineEdit, Button, HorizontalBox } from "std-widgets.slint";
+import { TextEdit, Button, HorizontalBox } from "std-widgets.slint";
 
 export component MainWindow inherits Window {
   title: "qr_code_genarator";
 
   in property <image> qrcode;
-  callback generate-qr-code(string);
+  in property <string> filename;
+  in-out property <bool> is-save-success: false;
+  
+  callback generate-qrcode(string);
+  callback save-qrcode();
 
   VerticalLayout {
     padding: 50px;
     spacing: 20px;
+
+    popup := PopupWindow {
+      Text {
+        text: "- 保存成功 -";
+        font-size: 12px;
+        color: #00b300;
+      }
+      x: parent.width / 2.5;
+      y: 10px;
+    }
+
+    timer := Timer {
+      interval: 2s;
+      running: false;
+      triggered() => {
+        self.running = false;
+        popup.close();
+        is-save-success = false;
+      }
+    }
+
     Text {
       text: "二维码生成器";
       font-size: 20px;
@@ -16,26 +41,39 @@ export component MainWindow inherits Window {
       horizontal-alignment: center;
     }
 
-    le := LineEdit {
+    te := TextEdit {
       placeholder-text: "在此输入二维码内容";
       font-size: 13px;
-      height: 32px;
+      height: 80px;
     }
 
     Button {
-      text: "确 定";
-      enabled: le.text != "";
+      text: "生成二维码";
+      enabled: te.text != "";
       clicked => {
-        root.generate-qr-code(le.text);
-        le.text = "";
+        root.generate-qrcode(te.text);
+        te.text = "";
+      }
+    }
+
+    Button {
+      text: "图片另存为";
+      enabled: qrcode.width > 0;
+      clicked => {
+        root.save-qrcode();
+        if (is-save-success) {
+          popup.show();
+          timer.running = true;
+        }
       }
     }
 
     HorizontalBox {
       alignment: center;
+      width: 232px;
+      height: 232px;
+
       Image {
-        width: 232px;
-        height: 232px;
         source: qrcode;
       }
     }
