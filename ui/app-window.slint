@@ -1,15 +1,15 @@
 import { TextEdit, Button, HorizontalBox } from "std-widgets.slint";
 
 export component MainWindow inherits Window {
-  title: "qr_code_genarator";
+  title: "QR Code Genarator";
 
-  in property <image> qrcode;
+  in property <image> qr-code;
   in property <string> file-id;
   in property <int> save-count;
   in-out property <bool> is-save-success: false;
   
-  callback generate-qrcode(string);
-  callback save-qrcode();
+  callback generate-qr-code(string);
+  callback save-qr-code();
 
   VerticalLayout {
     padding: 50px;
@@ -52,16 +52,16 @@ export component MainWindow inherits Window {
       text: "生成二维码";
       enabled: te.text != "";
       clicked => {
-        root.generate-qrcode(te.text);
+        root.generate-qr-code(te.text);
         te.text = "";
       }
     }
 
     Button {
-      text: "图片另存为";
-      enabled: qrcode.width > 0;
+      text: "保存至本地";
+      enabled: qr-code.width > 0;
       clicked => {
-        root.save-qrcode();
+        root.save-qr-code();
         if (is-save-success) {
           popup.show();
           timer.running = true;
@@ -75,7 +75,7 @@ export component MainWindow inherits Window {
       height: 232px;
 
       Image {
-        source: qrcode;
+        source: qr-code;
       }
     }
   }

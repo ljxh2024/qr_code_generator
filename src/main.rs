@@ -2,8 +2,8 @@
 
 use slint::{ Image, PlatformError, Rgb8Pixel, SharedPixelBuffer };
 use qrcode::QrCode;
-use image::{Rgb, ExtendedColorType, ImageFormat, save_buffer_with_format };
-use rand::{distributions::Alphanumeric, thread_rng, Rng};
+use image::{ Rgb, ExtendedColorType, ImageFormat, save_buffer_with_format };
+use rand::{ distributions::Alphanumeric, Rng, thread_rng };
 
 slint::include_modules!();
 
@@ -11,7 +11,7 @@ fn main() -> Result<(), PlatformError>{
     let ui = MainWindow::new()?;
 
     // 生成二维码
-    ui.on_generate_qrcode({
+    ui.on_generate_qr_code({
         let ui_handle = ui.as_weak();
 
         move |s| {
@@ -27,23 +27,23 @@ fn main() -> Result<(), PlatformError>{
                 );
                 let file_id: String = thread_rng().sample_iter(&Alphanumeric).take(8).map(char::from).collect();
 
-                ui.set_qrcode(Image::from_rgb8(buffer));
+                ui.set_qr_code(Image::from_rgb8(buffer));
                 ui.set_file_id(file_id.into());
                 ui.set_save_count(0);
             } else {
-                ui.set_qrcode(Image::from_rgb8(SharedPixelBuffer::<Rgb8Pixel>::new(0, 0)));
+                ui.set_qr_code(Image::from_rgb8(SharedPixelBuffer::<Rgb8Pixel>::new(0, 0)));
             }
         }
     });
 
     // 保存二维码
-    ui.on_save_qrcode({
+    ui.on_save_qr_code({
         let ui_handle = ui.as_weak();
 
         move || {
             let ui = ui_handle.unwrap();
 
-            let path = std::env::current_dir().unwrap();
+            let dir = std::env::current_dir().unwrap();
             let save_count = ui.get_save_count();
             let mut file_id = ui.get_file_id();
 
@@ -51,10 +51,15 @@ fn main() -> Result<(), PlatformError>{
                 file_id += &format!("({save_count})")
             }
 
-            if let Some(path_buf) = rfd::FileDialog::new().set_file_name(file_id + ".png").set_directory(&path).save_file() {
-                let img = ui.get_qrcode().to_rgb8().unwrap();
+            let result = rfd::FileDialog::new()
+                .add_filter("PNG图片文件", &["png"])
+                .set_file_name(file_id + ".png")
+                .set_directory(&dir)
+                .save_file();
+            if let Some(path) = result {
+                let img = ui.get_qr_code().to_rgb8().unwrap();
                 save_buffer_with_format(
-                    path_buf,
+                    path,
                     img.as_bytes(),
                     img.width(),
                     img.height(),
