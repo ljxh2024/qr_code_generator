@@ -52,7 +52,7 @@ fn main() -> Result<(), PlatformError>{
             }
 
             let result = rfd::FileDialog::new()
-                .add_filter("PNG图片文件", &["png"])
+                .add_filter("PNG", &["png"])
                 .set_file_name(file_id + ".png")
                 .set_directory(&dir)
                 .save_file();
