@@ -5,10 +5,7 @@ export component MainWindow inherits Window {
   width: 340px;
 
   in property <image> qr-code;
-  in property <string> file-id;
-  in property <int> save-count;
-  default-font-size: 0mm;
-    in-out property <bool> is-save-success: false;
+  in-out property <bool> is-save-success: false;
   
   callback generate-qr-code(string);
   callback save-qr-code();

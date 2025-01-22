@@ -1,18 +1,29 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use std::cell::RefCell;
+use std::rc::Rc;
 use slint::{ Image, PlatformError, Rgb8Pixel, SharedPixelBuffer };
 use qrcode::QrCode;
 use image::{ Rgb, ExtendedColorType, ImageFormat, save_buffer_with_format };
 use rand::{ distributions::Alphanumeric, Rng, thread_rng };
+use qr_code_generator::AppData;
 
 slint::include_modules!();
 
 fn main() -> Result<(), PlatformError> {
     let ui = MainWindow::new()?;
 
+    let app_data = AppData {
+        save_count: Rc::new(RefCell::new(0)),
+        file_stem: Rc::new(RefCell::new(String::from(""))),
+    };
+
     // 生成二维码
     ui.on_generate_qr_code({
         let ui_handle = ui.as_weak();
+
+        let save_count = Rc::clone(&app_data.save_count);
+        let file_stem = Rc::clone(&app_data.file_stem);
 
         move |s| {
             let ui = ui_handle.unwrap();
@@ -25,11 +36,11 @@ fn main() -> Result<(), PlatformError> {
                     img.width(),
                     img.height()
                 );
-                let file_id: String = thread_rng().sample_iter(&Alphanumeric).take(8).map(char::from).collect();
 
                 ui.set_qr_code(Image::from_rgb8(buffer));
-                ui.set_file_id(file_id.into());
-                ui.set_save_count(0);
+
+                *save_count.borrow_mut() = 0;
+                *file_stem.borrow_mut() = thread_rng().sample_iter(&Alphanumeric).take(8).map(char::from).collect();
             } else {
                 ui.set_qr_code(Image::from_rgb8(SharedPixelBuffer::<Rgb8Pixel>::new(0, 0)));
             }
@@ -44,16 +55,15 @@ fn main() -> Result<(), PlatformError> {
             let ui = ui_handle.unwrap();
 
             let dir = std::env::current_dir().unwrap();
-            let save_count = ui.get_save_count();
-            let mut file_id = ui.get_file_id();
+            let mut file_stem = app_data.file_stem.borrow().to_string();
 
-            if save_count > 0 {
-                file_id += &format!("({save_count})")
+            if *app_data.save_count.borrow() > 0 {
+                file_stem += &format!("({})", app_data.save_count.borrow());
             }
 
             let result = rfd::FileDialog::new()
                 .add_filter("PNG 图片文件", &["png"])
-                .set_file_name(file_id + ".png")
+                .set_file_name(file_stem + ".png")
                 .set_directory(&dir)
                 .save_file();
             if let Some(path) = result {
@@ -68,7 +78,7 @@ fn main() -> Result<(), PlatformError> {
                 ).unwrap();
 
                 ui.set_is_save_success(true);
-                ui.set_save_count(save_count + 1);
+                *app_data.save_count.borrow_mut() += 1;
             }
         }
     });
