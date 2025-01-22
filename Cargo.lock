@@ -3340,9 +3340,9 @@ dependencies = [
 name = "qr_code_generator"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "image 0.25.5",
  "qrcode",
- "rand",
  "rfd",
  "slint",
  "slint-build",
