@@ -1,8 +1,9 @@
 import { TextEdit, Button, HorizontalBox } from "std-widgets.slint";
 
 export component MainWindow inherits Window {
-    title: "QR Code Generator";
+    title: "二维码生成器";
     preferred-width: 340px;
+    icon: @image-url("logo.png");
     
     in property <image> qr-code;
     callback generate-qr-code(string);
@@ -35,17 +36,6 @@ export component MainWindow inherits Window {
             triggered() => {
                 popup.close();
                 self.running = false;
-            }
-        }
-        
-        HorizontalBox {
-            alignment: center;
-            padding-top: 14px;
-            
-            Text {
-                text: "二维码生成器";
-                font-size: 20px;
-                font-weight: 500;
             }
         }
         
