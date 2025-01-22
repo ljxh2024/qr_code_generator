@@ -1,91 +1,87 @@
 import { TextEdit, Button, HorizontalBox } from "std-widgets.slint";
 
 export component MainWindow inherits Window {
-  title: "QR Code Genarator";
-  width: 340px;
-
-  in property <image> qr-code;
-  
-  callback generate-qr-code(string);
-  callback save-qr-code;
-  callback show-success-popup();
-
-  show-success-popup() => {
-    popup.show();
-    timer.running = true;
-  }
-
-  VerticalLayout {
-    padding: 20px;
-    spacing: 10px;
-
-    popup := PopupWindow {
-      Text {
-        text: "- 保存成功 -";
-        font-size: 12px;
-        color: #00b300;
-      }
-      x: parent.width / 2.5;
-      y: 10px;
+    title: "QR Code Generator";
+    preferred-width: 340px;
+    
+    in property <image> qr-code;
+    callback generate-qr-code(string);
+    callback save-qr-code;
+    callback show-success-popup();
+    
+    show-success-popup() => {
+        popup.show();
+        timer.running = true;
     }
+    
+    VerticalLayout {
+        padding: 20px;
+        spacing: 10px;
+        
+        popup := PopupWindow {
+            x: parent.width / 2.5;
+            y: 10px;
+            
+            Text {
+                text: "- 保存成功 -";
+                font-size: 12px;
+                color: #00b300;
+            }
+        }
+        
+        timer := Timer {
+            interval: 2s;
+            running: false;
+            triggered() => {
+                popup.close();
+                self.running = false;
+            }
+        }
+        
+        HorizontalBox {
+            alignment: center;
+            padding-top: 14px;
+            
+            Text {
+                text: "二维码生成器";
+                font-size: 20px;
+                font-weight: 500;
+            }
+        }
+        
+        HorizontalBox {
+            padding-top: 20px;
+            padding-bottom: 20px;
+            
+            te := TextEdit {
+                placeholder-text: "在此输入二维码内容";
+                font-size: 13px;
+                height: 80px;
+                has-focus: false;
+            }
+        }
 
-    timer := Timer {
-      interval: 2s;
-      running: false;
-      triggered() => {
-        popup.close();
-        self.running = false;
-      }
+        Button {
+            text: "生成二维码";
+            enabled: te.text != "";
+            clicked => {
+                root.generate-qr-code(te.text);
+                te.text = "";
+            }
+        }
+        
+        Button {
+            text: "保存至本地";
+            enabled: qr-code.width > 0;
+            clicked => { root.save-qr-code() }
+        }
+        
+        HorizontalBox {
+            alignment: center;
+            height: 232px;
+            padding-top: 20px;
+            
+            Image { source: qr-code; }
+        }
     }
-
-    HorizontalBox {
-      alignment: center;
-      padding-top: 14px;
-      
-      Text {
-        text: "二维码生成器";
-        font-size: 20px;
-        font-weight: 500;
-      }
-    }
-
-    HorizontalBox {
-      padding-top: 20px;
-      padding-bottom: 20px;
-
-      te := TextEdit {
-        placeholder-text: "在此输入二维码内容";
-        font-size: 13px;
-        height: 80px;
-        has-focus: false;
-      }
-    }
-
-    Button {
-      text: "生成二维码";
-      enabled: te.text != "";
-      clicked => {
-        root.generate-qr-code(te.text);
-        te.text = "";
-      }
-    }
-
-    Button {
-      text: "保存至本地";
-      enabled: qr-code.width > 0;
-      clicked => {
-        root.save-qr-code();
-      }
-    }
-
-    HorizontalBox {
-      alignment: center;
-      height: 232px;
-      padding-top: 20px;
-
-      Image {
-        source: qr-code;
-      }
-    }
-  }
 }
