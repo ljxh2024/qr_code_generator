@@ -4,4 +4,4 @@
 
 ## 界面预览（深色模式）
 
-![qr_code_generate](http://124.71.107.97/resources/images/qr_code_generate.png)
+![qr_code_generate](http://124.71.107.97/resources/images/qr_code_generate_0.1.1.png)
