@@ -2,18 +2,20 @@ import { TextEdit, Button, HorizontalBox } from "std-widgets.slint";
 
 export component MainWindow inherits Window {
   title: "QR Code Genarator";
+  width: 340px;
 
   in property <image> qr-code;
   in property <string> file-id;
   in property <int> save-count;
-  in-out property <bool> is-save-success: false;
+  default-font-size: 0mm;
+    in-out property <bool> is-save-success: false;
   
   callback generate-qr-code(string);
   callback save-qr-code();
 
   VerticalLayout {
-    padding: 50px;
-    spacing: 20px;
+    padding: 20px;
+    spacing: 10px;
 
     popup := PopupWindow {
       Text {
@@ -35,17 +37,27 @@ export component MainWindow inherits Window {
       }
     }
 
-    Text {
-      text: "二维码生成器";
-      font-size: 20px;
-      font-weight: 500;
-      horizontal-alignment: center;
+    HorizontalBox {
+      alignment: center;
+      padding-top: 14px;
+      
+      Text {
+        text: "二维码生成器";
+        font-size: 20px;
+        font-weight: 500;
+      }
     }
 
-    te := TextEdit {
-      placeholder-text: "在此输入二维码内容";
-      font-size: 13px;
-      height: 80px;
+    HorizontalBox {
+      padding-top: 20px;
+      padding-bottom: 20px;
+
+      te := TextEdit {
+        placeholder-text: "在此输入二维码内容";
+        font-size: 13px;
+        height: 80px;
+        has-focus: false;
+      }
     }
 
     Button {
@@ -71,8 +83,8 @@ export component MainWindow inherits Window {
 
     HorizontalBox {
       alignment: center;
-      width: 232px;
       height: 232px;
+      padding-top: 20px;
 
       Image {
         source: qr-code;

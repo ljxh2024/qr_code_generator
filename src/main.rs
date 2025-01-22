@@ -7,7 +7,7 @@ use rand::{ distributions::Alphanumeric, Rng, thread_rng };
 
 slint::include_modules!();
 
-fn main() -> Result<(), PlatformError>{
+fn main() -> Result<(), PlatformError> {
     let ui = MainWindow::new()?;
 
     // 生成二维码
