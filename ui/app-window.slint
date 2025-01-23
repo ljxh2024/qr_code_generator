@@ -3,7 +3,6 @@ import { TextEdit, Button, HorizontalBox } from "std-widgets.slint";
 export component MainWindow inherits Window {
     title: "二维码生成器";
     preferred-width: 340px;
-    icon: @image-url("assets/logo.png");
     
     in property <image> qr-code;
     callback generate-qr-code(string);
