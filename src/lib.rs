@@ -13,16 +13,15 @@ pub fn main() {
 
 fn init() -> MainWindow {
     let window = MainWindow::new().unwrap();
-    
+
     let app_data = AppData {
-        save_count: Rc::new(RefCell::new(0)),
         file_stem: Rc::new(RefCell::new(String::from(""))),
+        save_count: Rc::new(RefCell::new(0)),
     };
     
     // 生成二维码
     window.on_generate_qr_code({
         let weak_window = window.as_weak();
-        
         let save_count = Rc::clone(&app_data.save_count);
         let file_stem = Rc::clone(&app_data.file_stem);
         
@@ -33,10 +32,8 @@ fn init() -> MainWindow {
             if s.len() > 0 {
                 let img = QrCode::new(s).unwrap().render::<Rgb<u8>>().build();
                 let buffer = SharedPixelBuffer::<Rgb8Pixel>::clone_from_slice(img.as_raw(), img.width(), img.height());
-                
                 *save_count.borrow_mut() = 0;
                 *file_stem.borrow_mut() = format!("qr_code_{}", Local::now().timestamp());
-                
                 ui.set_qr_code(Image::from_rgb8(buffer));
             } else {
                 ui.set_qr_code(Image::from_rgb8(SharedPixelBuffer::<Rgb8Pixel>::new(0, 0)));
@@ -50,7 +47,6 @@ fn init() -> MainWindow {
         
         move || {
             let ui = weak_window.unwrap();
-            
             let dir = std::env::current_dir().unwrap();
             let mut file_stem = app_data.file_stem.borrow().to_string();
             
@@ -64,7 +60,6 @@ fn init() -> MainWindow {
                 .set_file_name(file_stem + ".png")
                 .set_directory(&dir)
                 .save_file();
-
             if let Some(path) = result {
                 let img = ui.get_qr_code().to_rgb8().unwrap();
                 save_buffer_with_format(
@@ -75,7 +70,6 @@ fn init() -> MainWindow {
                     ExtendedColorType::Rgb8,
                     ImageFormat::Png
                 ).unwrap();
-                
                 *app_data.save_count.borrow_mut() += 1;
                 ui.invoke_show_success_popup();
             }
